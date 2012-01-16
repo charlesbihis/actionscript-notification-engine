@@ -267,8 +267,8 @@
 				<s:RichText styleName="notificationText" text="{notificationMessage}" width="{NOTIFICATION_TEXT_WIDTH}" visible="{(isCompact) ? false : true}" includeInLayout="{(isCompact) ? false : true}" />
 			</mx:VBox>
 		</mx:HBox>
-		<mx:Image id="closeShadow" source="/icons/close.png" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" />
-		<mx:Image id="closeButton" source="/icons/close_over.png" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" click="closeToast(event)" />
+		<mx:Image id="closeShadow" source="@Embed('/com/charlesbihis/engine/notification/assets/images/close.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" />
+		<mx:Image id="closeButton" source="@Embed('/com/charlesbihis/engine/notification/assets/images/close_over.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" click="closeToast(event)" />
 	</mx:Canvas>
 	
 </s:Window>
