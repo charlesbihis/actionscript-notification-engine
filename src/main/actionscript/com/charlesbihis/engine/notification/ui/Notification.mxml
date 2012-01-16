@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window
+		xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		styleName="notificationContainer"
+		systemChrome="none" transparent="true"
+		showStatusBar="false" type="lightweight"
+		alwaysInFront="true" resizable="false"
+		maximizable="false" minimizable="false"
+		width="{notificationContent.width}" height="{notificationContent.height}"
+		rollOver="{closeShadow.visible=true}" rollOut="{closeShadow.visible=false}"
+		click="clickHandler()" creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.charlesbihis.engine.notification.NotificationConst;
+			import com.charlesbihis.engine.notification.NotificationManager;
+			import com.charlesbihis.engine.notification.event.NotificationEvent;
+			
+			import flash.desktop.NativeApplication;
+			
+			import mx.events.EffectEvent;
+			
+			// notification constants
+			private static const NOTIFICATION_WIDTH:int = 300;
+			private static const NOTIFICATION_TEXT_WIDTH:int = 210;
+			private static const RIGHT_MARGIN:int = 10;
+			private static const TOP_MARGIN:int = 5;
+			private static const MAX_FADEIN_ALPHA:Number = 0.85;
+			private static const MOVE_BY:int = 15;
+			private static const LIFETIME_RESET_VALUE:int = 5;	// in seconds
+			
+			// notification properties
+			[Bindable] public var notificationTitle:String;
+			[Bindable] public var notificationMessage:String;
+			[Bindable] public var notificationImage:String;
+			[Bindable] public var notificationLink:String;
+			[Bindable] public var isCompact:Boolean;
+			[Bindable] public var isSticky:Boolean;
+			[Bindable] public var isReplayable:Boolean = true;
+			
+			private var lifetimeTimer:Timer;
+			private var repositionTimer:Timer;
+			private var lifetime:int;
+			private var ticks:int;
+			private var isTop:Boolean;
+			private var isLeft:Boolean;
+			private var isUserIdle:Boolean;
+			
+			private var notificationManager:NotificationManager = NotificationManager.instance;
+			
+			private function init():void
+			{
+				// listen for important notifications
+				notificationManager.addEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
+				notificationManager.addEventListener(NotificationEvent.USER_IS_IDLE, userIdleHandler);
+				notificationManager.addEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
+				
+				// set notification display length
+				lifetime = NotificationManager.notificationDisplayLength;
+				
+				// add appropriate event handlers - don't want notification to disappear when the user is mouse'd over
+				addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+				addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+				
+				// start the lifetime logic
+				ticks = lifetime;
+				lifetimeTimer = new Timer(1000);
+				lifetimeTimer.addEventListener(TimerEvent.TIMER, lifetimeTimerHandler);
+				if (!isSticky)
+				{
+					lifetimeTimer.start();
+				}  // if statement
+				
+				// start the reposition logic
+				repositionTimer = new Timer(NotificationConst.DISPLAY_LENGTH_LONG * 1000);
+				repositionTimer.addEventListener(TimerEvent.TIMER, repositionTimerHandler);
+				repositionTimer.start();
+				
+				// determine location of notification
+				isTop = NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
+				isLeft = NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_BOTTOM_LEFT;
+				
+				// find a position on-screen
+				var position:Point = findSpotForMessage(this.bounds);
+				nativeWindow.x = Capabilities.screenResolutionX - width - RIGHT_MARGIN;
+				nativeWindow.y = position.y;
+				landingEffect.yTo = position.y;
+				landingEffect.yFrom = (isTop) ? position.y - MOVE_BY : position.y + MOVE_BY;
+				landingEffect.xFrom = landingEffect.xTo = position.x;
+				
+				// show it!
+				visible = true;
+				fadein.play();
+				
+				function lifetimeTimerHandler(event:TimerEvent):void
+				{
+					if (!isUserIdle && --ticks == 0)
+					{
+						lifetimeTimer.stop();
+						closeToast();
+					}  // if statement
+				}  // timerHandler
+				
+				function repositionTimerHandler(event:TimerEvent):void
+				{
+					// find a position on-screen
+					var newPosition:Point = findSpotForMessage(bounds);
+					repositionEffect.xFrom = position.x;
+					repositionEffect.xTo = newPosition.x;
+					repositionEffect.yFrom = position.y;
+					repositionEffect.yTo = newPosition.y;
+					repositionEffect.play();
+					
+					// reset original position so that new repositioning actions are still handled correctly
+					position = newPosition;
+				}  // repositionTimerHandler
+			}  // init
+			
+			private function findSpotForMessage(size:Rectangle):Point
+			{
+				var spot:Point = new Point();
+				var done:Boolean = false;
+				var currentScreen:Screen;
+				var screen:Screen = currentScreen = Screen.mainScreen;
+				
+				var x:int;
+				var y:int;
+				var testRect:Rectangle;
+				
+				for (x = (isLeft ? screen.visibleBounds.x + RIGHT_MARGIN : screen.visibleBounds.x + screen.visibleBounds.width - size.width - TOP_MARGIN);
+					 (isLeft ? x <= screen.visibleBounds.x + screen.visibleBounds.width - size.width - 5 : x >= screen.visibleBounds.x);
+					 x -= (isLeft ? -(size.width + TOP_MARGIN) : size.width + TOP_MARGIN))
+				{
+					for (y = (isTop ? screen.visibleBounds.y + TOP_MARGIN + TOP_MARGIN : screen.visibleBounds.y + screen.visibleBounds.height - size.height - TOP_MARGIN);
+						 (isTop ? y <= screen.visibleBounds.y + screen.visibleBounds.height - size.height - TOP_MARGIN : y >= screen.visibleBounds.y);
+						 y += (isTop ? 10 : -10))
+					{
+						testRect = new Rectangle(x, isTop ? y - TOP_MARGIN : y, size.width + TOP_MARGIN, size.height + TOP_MARGIN);
+							
+						if(!isOccupied(testRect))
+						{
+							spot.x = x;
+							spot.y = y;
+							done = true;
+							break;
+						}  // if statement
+					}  // for loop
+					
+					if (done)
+					{
+						break;
+					}  // if statement
+				}  // for loop
+				
+				return spot;
+			}  // findSpotForMessage
+			
+			private function isOccupied(rectangle:Rectangle):Boolean
+			{
+				var occupied:Boolean = false;
+				for each (var window:NativeWindow in NativeApplication.nativeApplication.openedWindows)
+				{
+					occupied = occupied ||  (window.title == NotificationManager.NOTIFICATION_IDENTIFIER && window.bounds.intersects(rectangle) && window.visible);
+				}  // for loop
+				
+				return occupied;
+			}  // isOccupied
+			
+			private function clickHandler():void
+			{
+				if (notificationLink != null && !closeButton.visible)
+				{
+					flash.net.navigateToURL(new URLRequest(notificationLink));
+				}  // if statement
+			}  // clickHandler
+			
+			private function closeToast(event:Event = null):void
+			{
+				// clean up the event listeners
+				notificationManager.removeEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
+				notificationManager.removeEventListener(NotificationEvent.USER_IS_IDLE, userIdleHandler);
+				notificationManager.removeEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
+				removeEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+				removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+				
+				// If 'close' button was pushed, let's close it
+				// immediately.  Otherwise, let's start the
+				// fade-out effect and close after it's done playing.
+				if (event is MouseEvent)
+				{
+					event.preventDefault();
+					finishClose();
+				}  // if statement
+				else
+				{
+					fadeout.addEventListener(EffectEvent.EFFECT_END, finishClose);
+					fadeout.play();
+				}  // else statement
+				
+				function finishClose(event:Event = null):void
+				{
+					if (event is EffectEvent)
+					{
+						fadeout.removeEventListener(EffectEvent.EFFECT_END, finishClose);
+					}  // if statement
+					
+					dispatchEvent(new NotificationEvent(NotificationEvent.NOTIFICATION_CLOSE));
+					lifetimeTimer.stop();
+					repositionTimer.stop();
+					close();
+				}  // finishClose
+			}  // closeToast
+			
+			private function mouseOverHandler(event:MouseEvent = null):void
+			{
+				// reset lifetime
+				if (ticks < LIFETIME_RESET_VALUE)
+				{
+					ticks = LIFETIME_RESET_VALUE;
+				}  // if statement
+				
+				lifetimeTimer.stop();
+			}  // mouseOverHandler
+			
+			private function mouseOutHandler(event:MouseEvent = null):void
+			{
+				if (!isSticky)
+				{
+					lifetimeTimer.start();
+				}  // if statement
+			}  // mouseOutHandler
+			
+			private function userIdleHandler(event:NotificationEvent):void
+			{
+				isUserIdle = true;
+			}  // userIdleHandler
+			
+			private function userPresentHandler(event:NotificationEvent):void
+			{
+				// reset lifetime
+				if (ticks < LIFETIME_RESET_VALUE)
+				{
+					ticks = LIFETIME_RESET_VALUE;
+				}  // if statement
+				
+				isUserIdle = false;
+			}  // userPresentHandler
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:Fade id="fadein" target="{this}" alphaFrom="0" alphaTo="{MAX_FADEIN_ALPHA}" duration="500" effectStart="landingEffect.play()" />
+		<mx:Fade id="fadeout" target="{this}" alphaFrom="{MAX_FADEIN_ALPHA}" alphaTo="0" duration="800" effectEnd="close()" />
+		<mx:Move id="landingEffect" target="{this}" duration="250" />
+		<mx:Move id="repositionEffect" target="{this}" duration="500" />
+	</fx:Declarations>
+
+	<fx:Style source="/com/charlesbihis/engine/notification/style/style.css" />
+	
+	<mx:Canvas>
+		<mx:HBox id="notificationContent" styleName="notification" width="{NOTIFICATION_WIDTH}">
+			<mx:Image height="{(isCompact) ? 16 : 50}" width="{(isCompact) ? 16 : 50}" source="{notificationImage}" />
+			<mx:VBox>
+				<s:RichText styleName="notificationText" text="{notificationTitle}" fontWeight="bold" width="{NOTIFICATION_TEXT_WIDTH}" />
+				<s:RichText styleName="notificationText" text="{notificationMessage}" width="{NOTIFICATION_TEXT_WIDTH}" visible="{(isCompact) ? false : true}" includeInLayout="{(isCompact) ? false : true}" />
+			</mx:VBox>
+		</mx:HBox>
+		<mx:Image id="closeShadow" source="/icons/close.png" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" />
+		<mx:Image id="closeButton" source="/icons/close_over.png" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" click="closeToast(event)" />
+	</mx:Canvas>
+	
+</s:Window>
