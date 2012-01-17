@@ -16,7 +16,6 @@ package com.charlesbihis.engine.notification
 		
 		public static var notificationDisplayLocation:String = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
 		public static var notificationDisplayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM;
-		public static var showSummaryToast:Boolean = true;
 		
 		private static const NOTIFICATION_THROTTLE_TIME:int = 500;
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;
@@ -79,7 +78,7 @@ package com.charlesbihis.engine.notification
 			showAll();
 		}  // showNotification
 		
-		public function show(notificationTitle:String, notificationMessage:String, notificationImage:String, notificationLink:String, isCompact:Boolean = false, isSticky:Boolean = false, isQueueable:Boolean = true):void
+		public function show(notificationTitle:String, notificationMessage:String, notificationImage:String, notificationLink:String = null, isCompact:Boolean = false, isSticky:Boolean = false, isQueueable:Boolean = true):void
 		{
 			var notification:Notification = new Notification();
 			notification.notificationTitle = notificationTitle;
@@ -127,6 +126,11 @@ package com.charlesbihis.engine.notification
 			
 			showAll();
 		}  // replayLatestFiveUpdates
+		
+		public function clearLatestFiveUpdates():void
+		{
+			previousQueue.removeAll();
+		}  // clearLatestFiveUpdates
 		
 		private function showAll():void
 		{
