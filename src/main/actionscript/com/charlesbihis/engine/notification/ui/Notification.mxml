@@ -21,6 +21,7 @@
 			import flash.desktop.NativeApplication;
 			
 			import mx.events.EffectEvent;
+			import mx.utils.UIDUtil;
 			
 			// notification constants
 			private static const NOTIFICATION_WIDTH:int = 300;
@@ -47,6 +48,7 @@
 			private var isTop:Boolean;
 			private var isLeft:Boolean;
 			private var isUserIdle:Boolean;
+			private var notificationId:String;
 			
 			private var notificationManager:NotificationManager = NotificationManager.instance;
 			
@@ -56,6 +58,10 @@
 				notificationManager.addEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
 				notificationManager.addEventListener(NotificationEvent.USER_IS_IDLE, userIdleHandler);
 				notificationManager.addEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
+				
+				// mark this update uniquely
+				notificationId = UIDUtil.createUID();
+				title += "-" + notificationId;
 				
 				// set notification display length
 				lifetime = NotificationManager.notificationDisplayLength;
@@ -162,7 +168,7 @@
 				var occupied:Boolean = false;
 				for each (var window:NativeWindow in NativeApplication.nativeApplication.openedWindows)
 				{
-					occupied = occupied ||  (window.title == NotificationManager.NOTIFICATION_IDENTIFIER && window.bounds.intersects(rectangle) && window.visible);
+					occupied = occupied ||  (window.title.indexOf(NotificationManager.NOTIFICATION_IDENTIFIER) >= 0 && window.title.indexOf(notificationId) < 0 && window.bounds.intersects(rectangle) && window.visible);
 				}  // for loop
 				
 				return occupied;
