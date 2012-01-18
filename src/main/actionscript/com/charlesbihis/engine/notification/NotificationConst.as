@@ -3,9 +3,9 @@ package com.charlesbihis.engine.notification
 	public class NotificationConst
 	{
 		// display length constants
-		public static const DISPLAY_LENGTH_SHORT:int = 5;
-		public static const DISPLAY_LENGTH_MEDIUM:int= 9;
-		public static const DISPLAY_LENGTH_LONG:int = 13;
+		public static const DISPLAY_LENGTH_SHORT:int = 4;
+		public static const DISPLAY_LENGTH_MEDIUM:int= 8;
+		public static const DISPLAY_LENGTH_LONG:int = 12;
 		
 		// display location constants
 		public static const DISPLAY_LOCATION_TOP_LEFT:String = "topLeft";
