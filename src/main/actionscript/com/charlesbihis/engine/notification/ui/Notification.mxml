@@ -23,6 +23,9 @@
 			import mx.events.EffectEvent;
 			import mx.utils.UIDUtil;
 			
+			// public constants
+			public static const NOTIFICATION_IDENTIFIER:String = "NOTIFICATION_WINDOW";
+			
 			// notification constants
 			private static const NOTIFICATION_WIDTH:int = 300;
 			private static const NOTIFICATION_TEXT_WIDTH:int = 210;
@@ -41,6 +44,7 @@
 			[Bindable] public var isSticky:Boolean;
 			[Bindable] public var isReplayable:Boolean = true;
 			
+			// private properties
 			private var lifetimeTimer:Timer;
 			private var repositionTimer:Timer;
 			private var lifetime:int;
@@ -168,7 +172,7 @@
 				var occupied:Boolean = false;
 				for each (var window:NativeWindow in NativeApplication.nativeApplication.openedWindows)
 				{
-					occupied = occupied ||  (window.title.indexOf(NotificationManager.NOTIFICATION_IDENTIFIER) >= 0 && window.title.indexOf(notificationId) < 0 && window.bounds.intersects(rectangle) && window.visible);
+					occupied = occupied ||  (window.title.indexOf(NOTIFICATION_IDENTIFIER) >= 0 && window.title.indexOf(notificationId) < 0 && window.bounds.intersects(rectangle) && window.visible);
 				}  // for loop
 				
 				return occupied;

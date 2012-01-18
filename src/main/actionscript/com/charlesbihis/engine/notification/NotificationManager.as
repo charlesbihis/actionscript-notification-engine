@@ -12,10 +12,9 @@ package com.charlesbihis.engine.notification
 	
 	public class NotificationManager extends EventDispatcher
 	{
-		public static const NOTIFICATION_IDENTIFIER:String = "NOTIFICATION_WINDOW";
-		
 		public static var notificationDisplayLocation:String = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
 		public static var notificationDisplayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM;
+		public static var playNotificationSound:Boolean = false;
 		
 		private static const NOTIFICATION_THROTTLE_TIME:int = 500;
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;
@@ -69,7 +68,7 @@ package com.charlesbihis.engine.notification
 			}  // while loop
 			
 			// mark this window so we can recognize it as a notification popup window
-			notification.title = NOTIFICATION_IDENTIFIER;
+			notification.title = Notification.NOTIFICATION_IDENTIFIER;
 			
 			// queue it so we avoid overlapping notification windows
 			queue.addItem(notification);
@@ -119,7 +118,7 @@ package com.charlesbihis.engine.notification
 				notification.notificationLink = previousNotification.notificationLink;
 				notification.isCompact = previousNotification.isCompact;
 				notification.isSticky = previousNotification.isSticky;
-				notification.title = NOTIFICATION_IDENTIFIER;
+				notification.title = Notification.NOTIFICATION_IDENTIFIER;
 				
 				queue.addItem(notification);
 			}  // for loop
