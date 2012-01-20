@@ -16,6 +16,7 @@ package com.charlesbihis.engine.notification
 		public static var notificationDisplayLocation:String = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
 		public static var notificationDisplayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM;
 		public static var playNotificationSound:Boolean = false;
+		public static var otherWindowsToAvoid:Array = new Array();
 		
 		private static const NOTIFICATION_THROTTLE_TIME:int = 500;
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;

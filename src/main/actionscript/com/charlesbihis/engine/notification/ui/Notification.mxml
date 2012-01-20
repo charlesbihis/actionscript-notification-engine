@@ -170,9 +170,18 @@
 			private function isOccupied(rectangle:Rectangle):Boolean
 			{
 				var occupied:Boolean = false;
+				var isOtherWindow:Boolean = false;
 				for each (var window:NativeWindow in NativeApplication.nativeApplication.openedWindows)
 				{
-					occupied = occupied ||  (window.title.indexOf(NOTIFICATION_IDENTIFIER) >= 0 && window.title.indexOf(notificationId) < 0 && window.bounds.intersects(rectangle) && window.visible);
+					for (var i:int = 0; i < NotificationManager.otherWindowsToAvoid.length; i++)
+					{
+						if (window.title.indexOf(NotificationManager.otherWindowsToAvoid[i]) >= 0)
+						{
+							isOtherWindow = true;
+							break;
+						}  // if statement
+					}  // for loop
+					occupied = occupied ||  (((window.title.indexOf(NOTIFICATION_IDENTIFIER) >= 0 && window.title.indexOf(notificationId) < 0) || isOtherWindow) && window.bounds.intersects(rectangle) && window.visible);
 				}  // for loop
 				
 				return occupied;
