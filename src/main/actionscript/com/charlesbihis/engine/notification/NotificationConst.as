@@ -2,6 +2,9 @@ package com.charlesbihis.engine.notification
 {
 	public class NotificationConst
 	{
+		// general
+		public static const DEFAULT_ICON:String = "/com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png";
+		
 		// display length constants
 		public static const DISPLAY_LENGTH_SHORT:int = 4;
 		public static const DISPLAY_LENGTH_MEDIUM:int= 8;

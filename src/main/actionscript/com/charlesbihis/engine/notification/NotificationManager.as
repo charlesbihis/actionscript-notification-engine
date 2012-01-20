@@ -12,6 +12,7 @@ package com.charlesbihis.engine.notification
 	
 	public class NotificationManager extends EventDispatcher
 	{
+		public static var defaultNotificationImage:String = NotificationConst.DEFAULT_ICON;
 		public static var notificationDisplayLocation:String = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
 		public static var notificationDisplayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM;
 		public static var playNotificationSound:Boolean = false;
@@ -55,6 +56,12 @@ package com.charlesbihis.engine.notification
 		
 		public function showNotification(notification:Notification):void
 		{
+			// set image to default if none provided
+			if (notification.notificationImage == null || notification.notificationImage.length == 0)
+			{
+				notification.notificationImage = NotificationManager.defaultNotificationImage;
+			}  // if statement
+			
 			// place it in the previousQueue for possibly replaying later,
 			if (notification.isReplayable)
 			{
@@ -212,7 +219,7 @@ package com.charlesbihis.engine.notification
 				
 				// show it
 				showNotification(summaryNotification);
-			}
+			}  // if statement
 		}  // onPresence
 	}  // class declaration
 }  // package
