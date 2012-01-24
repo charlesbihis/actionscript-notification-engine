@@ -29,8 +29,8 @@ package com.charlesbihis.engine.notification
 		private var previousQueue:ArrayCollection;
 		private var latestNotificationTime:Number;
 		private var suppressedNotificationCount:int;
-		private var isUserIdle:Boolean;
 		private var activeToasts:int = 0;
+		private var _isUserIdle:Boolean;
 		
 		public function NotificationManager(lock:Class)
 		{
@@ -43,7 +43,7 @@ package com.charlesbihis.engine.notification
 			previousQueue = new ArrayCollection();
 			latestNotificationTime = 0;
 			suppressedNotificationCount = 0;
-			isUserIdle = false;
+			_isUserIdle = false;
 			
 			NativeApplication.nativeApplication.idleThreshold = NOTIFICATION_IDLE_THRESHOLD;
 			NativeApplication.nativeApplication.addEventListener(Event.USER_IDLE, userIdleHandler);
@@ -54,6 +54,11 @@ package com.charlesbihis.engine.notification
 		{
 			return _instance;
 		}  // instance
+		
+		public function get isUserIdle():Boolean
+		{
+			return _isUserIdle;
+		}  // isUserIdle
 		
 		public function showNotification(notification:Notification):void
 		{
@@ -198,13 +203,13 @@ package com.charlesbihis.engine.notification
 		
 		private function userIdleHandler(event:Event):void
 		{
-			isUserIdle = true;
+			_isUserIdle = true;
 			dispatchEvent(new NotificationEvent(NotificationEvent.USER_IS_IDLE));
 		}  // onIdle
 		
 		private function userPresentHandler(event:Event):void
 		{
-			isUserIdle = false;
+			_isUserIdle = false;
 			dispatchEvent(new NotificationEvent(NotificationEvent.USER_IS_PRESENT));
 			
 			if (suppressedNotificationCount > 0)

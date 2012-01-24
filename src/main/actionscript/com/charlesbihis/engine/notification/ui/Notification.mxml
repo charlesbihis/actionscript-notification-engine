@@ -51,7 +51,6 @@
 			private var ticks:int;
 			private var isTop:Boolean;
 			private var isLeft:Boolean;
-			private var isUserIdle:Boolean;
 			private var notificationId:String;
 			
 			private var notificationManager:NotificationManager = NotificationManager.instance;
@@ -60,7 +59,6 @@
 			{
 				// listen for important notifications
 				notificationManager.addEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
-				notificationManager.addEventListener(NotificationEvent.USER_IS_IDLE, userIdleHandler);
 				notificationManager.addEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
 				
 				// mark this update uniquely
@@ -106,7 +104,7 @@
 				
 				function lifetimeTimerHandler(event:TimerEvent):void
 				{
-					if (!isUserIdle && --ticks == 0)
+					if (!notificationManager.isUserIdle && --ticks == 0)
 					{
 						lifetimeTimer.stop();
 						closeToast();
@@ -199,7 +197,6 @@
 			{
 				// clean up the event listeners
 				notificationManager.removeEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
-				notificationManager.removeEventListener(NotificationEvent.USER_IS_IDLE, userIdleHandler);
 				notificationManager.removeEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
 				removeEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
 				removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
@@ -251,20 +248,13 @@
 				}  // if statement
 			}  // mouseOutHandler
 			
-			private function userIdleHandler(event:NotificationEvent):void
-			{
-				isUserIdle = true;
-			}  // userIdleHandler
-			
 			private function userPresentHandler(event:NotificationEvent):void
 			{
-				// reset lifetime
+				// reset lifetime if too low - don't want notifications disappearing immediately after the user returns
 				if (ticks < LIFETIME_RESET_VALUE)
 				{
 					ticks = LIFETIME_RESET_VALUE;
 				}  // if statement
-				
-				isUserIdle = false;
 			}  // userPresentHandler
 		]]>
 	</fx:Script>
