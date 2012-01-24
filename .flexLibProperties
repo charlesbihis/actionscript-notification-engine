@@ -5,8 +5,12 @@
     <classEntry path="com.charlesbihis.engine.notification.NotificationConst"/>
   </includeClasses>
   <includeResources>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/close_over.png" sourcePath="com/charlesbihis/engine/notification/assets/images/close_over.png"/>
     <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/close.png" sourcePath="com/charlesbihis/engine/notification/assets/images/close.png"/>
+    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/close_over.png" sourcePath="com/charlesbihis/engine/notification/assets/images/close_over.png"/>
+    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-114x114.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-114x114.png"/>
+    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png"/>
+    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-72x72.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-72x72.png"/>
+    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm.png"/>
   </includeResources>
   <namespaceManifests/>
 </flexLibProperties>
