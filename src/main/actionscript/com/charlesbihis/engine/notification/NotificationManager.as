@@ -158,7 +158,7 @@ package com.charlesbihis.engine.notification
 			if (isUserIdle && queue.length > 0 && (activeToasts >= MAX_ACTIVE_TOASTS || suppressedNotificationCount > 0))
 			{
 				// close all active notifications
-				if (activeToasts > 0)
+				if (activeToasts >= MAX_ACTIVE_TOASTS)
 				{
 					var notificationEvent:NotificationEvent = new NotificationEvent(NotificationEvent.CLOSE_ALL_NOTIFICATIONS);
 					dispatchEvent(notificationEvent);
@@ -216,7 +216,7 @@ package com.charlesbihis.engine.notification
 			{
 				// build summary notification
 				var summaryNotification:Notification = new Notification();
-				summaryNotification.notificationTitle = (suppressedNotificationCount > 1) ? "There were " + suppressedNotificationCount + " stories posted while you were away" : "There was 1 story posted while you were away";
+				summaryNotification.notificationTitle = "There were " + (suppressedNotificationCount + MAX_ACTIVE_TOASTS) + " stories posted while you were away";
 				summaryNotification.isReplayable = false;
 				
 				// must reset suppressedNotificationCount back to 0 so that this upcoming
