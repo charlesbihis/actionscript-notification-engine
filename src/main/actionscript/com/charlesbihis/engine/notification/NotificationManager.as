@@ -119,10 +119,7 @@ package com.charlesbihis.engine.notification
 			
 			for (var i:int = 0; i < previousQueue.length; i++)
 			{
-				// HACK: For some reason, I can't recycle the previous notifications.
-				//       Instead, I create a new notification object with the exact
-				//       same attributes.  But, ideally, I just re-use the ones
-				//       in the previous queue.
+				// must create new notification with same properties since previously closed windows cannot be re-opened
 				var previousNotification:Notification = previousQueue.getItemAt(i) as Notification;
 				var notification:Notification = new Notification();
 				notification.notificationTitle = previousNotification.notificationTitle;
@@ -143,6 +140,12 @@ package com.charlesbihis.engine.notification
 		{
 			previousQueue.removeAll();
 		}  // clearLatestFiveUpdates
+		
+		public function closeAllNotifications():void
+		{
+			var notificationEvent:NotificationEvent = new NotificationEvent(NotificationEvent.CLOSE_ALL_NOTIFICATIONS);
+			dispatchEvent(notificationEvent);
+		}  // closeAllNotifications
 		
 		private function showAll():void
 		{
