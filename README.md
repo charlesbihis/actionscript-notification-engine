@@ -1,4 +1,4 @@
-# ActionScript Notification Engine (codename "Project M6D Magnum Sidearm")
+# ActionScript Notification Engine (a.k.a. "Project M6D Magnum Sidearm")
 
 A powerful cross-platform notification engine.
 
@@ -21,3 +21,5 @@ M6D supports the following features...
 ## Usage
 
 ## Author
+
+## License
