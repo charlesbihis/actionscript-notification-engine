@@ -24,6 +24,15 @@ M6D supports the following features...
 
 ## Usage
 
+## Documentation
+
 ## Author
 
+* Created by Charles Bihis
+* Website: [www.whoischarles.com](www.whoischarles.com)
+* E-mail: [charles@whoischarles.com](mailto:charles@whoischarles.com)
+* Twitter: [@charlesbihis](http://www.twitter.com/charlesbihis)
+
 ## License
+
+M6D is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
