@@ -44,6 +44,8 @@
 			[Bindable] public var isSticky:Boolean;
 			[Bindable] public var isReplayable:Boolean = true;
 			
+			public var notificationManager:NotificationManager;
+			
 			// private properties
 			private var lifetimeTimer:Timer;
 			private var repositionTimer:Timer;
@@ -53,24 +55,25 @@
 			private var isLeft:Boolean;
 			private var notificationId:String;
 			
-			private var notificationManager:NotificationManager = NotificationManager.instance;
-			
 			private function init():void
 			{
+				
+				
+				trace("showing");
 				// listen for important notifications
 				notificationManager.addEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
 				notificationManager.addEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
+				
+				// add appropriate event handlers - don't want notification to disappear when the user is mouse'd over
+				addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+				addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 				
 				// mark this update uniquely
 				notificationId = UIDUtil.createUID();
 				title += "-" + notificationId;
 				
 				// set notification display length
-				lifetime = NotificationManager.notificationDisplayLength;
-				
-				// add appropriate event handlers - don't want notification to disappear when the user is mouse'd over
-				addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
-				addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+				lifetime = notificationManager.displayLength;
 				
 				// start the lifetime logic
 				ticks = lifetime;
@@ -87,8 +90,8 @@
 				repositionTimer.start();
 				
 				// determine location of notification
-				isTop = NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
-				isLeft = NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || NotificationManager.notificationDisplayLocation == NotificationConst.DISPLAY_LOCATION_BOTTOM_LEFT;
+				isTop = notificationManager.displayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || notificationManager.displayLocation == NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
+				isLeft = notificationManager.displayLocation == NotificationConst.DISPLAY_LOCATION_TOP_LEFT || notificationManager.displayLocation == NotificationConst.DISPLAY_LOCATION_BOTTOM_LEFT;
 				
 				// find a position on-screen
 				var position:Point = findSpotForMessage(this.bounds);
@@ -222,7 +225,7 @@
 						fadeout.removeEventListener(EffectEvent.EFFECT_END, finishClose);
 					}  // if statement
 					
-					dispatchEvent(new NotificationEvent(NotificationEvent.NOTIFICATION_CLOSE));
+					notificationManager.dispatchEvent(new NotificationEvent(NotificationEvent.NOTIFICATION_CLOSE));
 					lifetimeTimer.stop();
 					repositionTimer.stop();
 					close();
@@ -266,8 +269,6 @@
 		<mx:Move id="repositionEffect" target="{this}" duration="500" />
 	</fx:Declarations>
 
-	<fx:Style source="/com/charlesbihis/engine/notification/style/style.css" />
-	
 	<mx:Canvas>
 		<mx:HBox id="notificationContent" styleName="notification" width="{NOTIFICATION_WIDTH}">
 			<mx:Image height="{(isCompact) ? 16 : 50}" width="{(isCompact) ? 16 : 50}" source="{notificationImage}" />
@@ -276,8 +277,8 @@
 				<s:RichText styleName="notificationText" text="{notificationMessage}" width="{NOTIFICATION_TEXT_WIDTH}" visible="{(isCompact) ? false : true}" includeInLayout="{(isCompact) ? false : true}" />
 			</mx:VBox>
 		</mx:HBox>
-		<mx:Image id="closeShadow" source="@Embed('/com/charlesbihis/engine/notification/assets/images/close.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" />
-		<mx:Image id="closeButton" source="@Embed('/com/charlesbihis/engine/notification/assets/images/close_over.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" click="closeToast(event)" />
+		<mx:Image id="closeShadow" source="@Embed('/assets/images/close.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" />
+		<mx:Image id="closeButton" source="@Embed('/assets/images/close_over.png')" x="282" y="6" visible="false" rollOver="{closeButton.visible=true}" rollOut="{closeButton.visible=false}" click="closeToast(event)" />
 	</mx:Canvas>
 	
 </s:Window>
