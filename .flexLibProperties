@@ -3,14 +3,17 @@
   <includeClasses>
     <classEntry path="com.charlesbihis.engine.notification.NotificationManager"/>
     <classEntry path="com.charlesbihis.engine.notification.NotificationConst"/>
+    <classEntry path="com.charlesbihis.engine.notification.ui.Notification"/>
   </includeClasses>
   <includeResources>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/close.png" sourcePath="com/charlesbihis/engine/notification/assets/images/close.png"/>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/close_over.png" sourcePath="com/charlesbihis/engine/notification/assets/images/close_over.png"/>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-114x114.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-114x114.png"/>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png"/>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-72x72.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-72x72.png"/>
-    <resourceEntry destPath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm.png" sourcePath="com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm.png"/>
+    <resourceEntry destPath="assets/style/dark.swf" sourcePath="assets/style/dark.swf"/>
+    <resourceEntry destPath="assets/images/close.png" sourcePath="assets/images/close.png"/>
+    <resourceEntry destPath="assets/style/light.swf" sourcePath="assets/style/light.swf"/>
+    <resourceEntry destPath="assets/style/dark.css" sourcePath="assets/style/dark.css"/>
+    <resourceEntry destPath="assets/images/close_over.png" sourcePath="assets/images/close_over.png"/>
+    <resourceEntry destPath="assets/sounds/drop.mp3" sourcePath="assets/sounds/drop.mp3"/>
+    <resourceEntry destPath="assets/style/light.css" sourcePath="assets/style/light.css"/>
+    <resourceEntry destPath="assets/images/m6d-magnum-sidearm-50x50.png" sourcePath="assets/images/m6d-magnum-sidearm-50x50.png"/>
   </includeResources>
   <namespaceManifests/>
 </flexLibProperties>
