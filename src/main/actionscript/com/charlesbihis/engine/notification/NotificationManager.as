@@ -6,15 +6,16 @@ package com.charlesbihis.engine.notification
 	import flash.desktop.NativeApplication;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	import flash.system.Capabilities;
 	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
+	import mx.core.FlexGlobals;
 	
 	public class NotificationManager extends EventDispatcher
 	{
-		public static var defaultNotificationImage:String = NotificationConst.DEFAULT_ICON;
-		public static var notificationDisplayLocation:String = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
-		public static var notificationDisplayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM;
 		public static var playNotificationSound:Boolean = false;
 		public static var otherWindowsToAvoid:Array = new Array();
 		
@@ -22,50 +23,99 @@ package com.charlesbihis.engine.notification
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;
 		private static const NOTIFICATION_MAX_REPLAY_COUNT:int = 5;
 		private static const MAX_ACTIVE_TOASTS:int = 5;
-		
-		private static const _instance:NotificationManager = new NotificationManager(SingletonLock);
+		public static const MINIMUM_TIME_BETWEEN_NOTIFICATION_SOUNDS:int = 10000;	// 10 seconds
 		
 		private var queue:ArrayCollection;
 		private var previousQueue:ArrayCollection;
-		private var latestNotificationTime:Number;
+		private var latestNotificationDisplay:Number;
+		private var latestNotificationSound:Number;
 		private var suppressedNotificationCount:int;
 		private var activeToasts:int = 0;
 		private var _isUserIdle:Boolean;
+		private var _notificationSound:Sound;
 		
-		public function NotificationManager(lock:Class)
+		private var _defaultNotificationImage:String;
+		private var _defaultCompactNotificationImage:String;
+		private var _displayLocation:String;
+		private var _displayLength:int;
+		
+		public function NotificationManager(defaultStyle:String, defaultNotificationImage:String, defaultCompactNotificationImage:String, notificationSound:String = null, displayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM, displayLocation:String = NotificationConst.DISPLAY_LOCATION_AUTO)
 		{
-			if (lock != SingletonLock)
+			// load default style
+			FlexGlobals.topLevelApplication.styleManager.loadStyleDeclarations2(defaultStyle);
+			
+			// load notification sound
+			_notificationSound = new Sound(new URLRequest(notificationSound));
+			_notificationSound.addEventListener(Event.COMPLETE, loadSoundHandler);
+			
+			addEventListener(NotificationEvent.NOTIFICATION_CLOSE, notificationCloseHandler);
+			
+			function notificationCloseHandler(event:Event):void
 			{
-				throw new Error("Invalid singleton access.  Use NotificationManager.instance.");
+				activeToasts--;
+			}  // notificationCloseHandler
+			
+			_defaultNotificationImage = defaultNotificationImage;
+			_defaultCompactNotificationImage = defaultCompactNotificationImage;
+			_displayLength = displayLength;
+			_displayLocation = displayLocation;
+			
+			// if display location is set to "auto", configure default display location based on detected operating system
+			if (_displayLocation == NotificationConst.DISPLAY_LOCATION_AUTO)
+			{
+				if (flash.system.Capabilities.os.substr(0, 3).indexOf("Mac") >= 0)
+				{
+					_displayLocation = NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
+				}  // if statement
+				else
+				{
+					_displayLocation = NotificationConst.DISPLAY_LOCATION_BOTTOM_RIGHT;
+				}  // else statement
 			}  // if statement
 			
 			queue = new ArrayCollection();
 			previousQueue = new ArrayCollection();
-			latestNotificationTime = 0;
+			latestNotificationDisplay = 0;
+			latestNotificationSound = 0;
 			suppressedNotificationCount = 0;
 			_isUserIdle = false;
 			
 			NativeApplication.nativeApplication.idleThreshold = NOTIFICATION_IDLE_THRESHOLD;
 			NativeApplication.nativeApplication.addEventListener(Event.USER_IDLE, userIdleHandler);
 			NativeApplication.nativeApplication.addEventListener(Event.USER_PRESENT, userPresentHandler);
+			
+			function loadSoundHandler(event:Event):void
+			{
+//				log.info("Notification sound loaded");
+			}  // loadSoundHandler
 		}  // NotificationManager
 		
-		public static function get instance():NotificationManager
+		public function loadStyle(style:String):void
 		{
-			return _instance;
-		}  // instance
+			FlexGlobals.topLevelApplication.styleManager.loadStyleDeclarations2(style);
+		}
 		
 		public function get isUserIdle():Boolean
 		{
 			return _isUserIdle;
 		}  // isUserIdle
 		
+		public function get displayLocation():String
+		{
+			return _displayLocation;
+		}  // displayLocation
+		
+		public function get displayLength():int
+		{
+			return _displayLength;
+		}  // displayLength
+		
 		public function showNotification(notification:Notification):void
 		{
 			// set image to default if none provided
-			if (notification.notificationImage == null || notification.notificationImage.length == 0)
+			if (notification.image == null || notification.image.length == 0)
 			{
-				notification.notificationImage = NotificationManager.defaultNotificationImage;
+				notification.image = (notification.isCompact ? _defaultCompactNotificationImage : _defaultNotificationImage);
 			}  // if statement
 			
 			// place it in the previousQueue for possibly replaying later,
@@ -80,9 +130,6 @@ package com.charlesbihis.engine.notification
 				previousQueue.removeItemAt(0);
 			}  // while loop
 			
-			// mark this window so we can recognize it as a notification popup window
-			notification.title = Notification.NOTIFICATION_IDENTIFIER;
-			
 			// queue it so we avoid overlapping notification windows
 			queue.addItem(notification);
 			
@@ -90,16 +137,16 @@ package com.charlesbihis.engine.notification
 			showAll();
 		}  // showNotification
 		
-		public function show(notificationTitle:String, notificationMessage:String, notificationImage:String, notificationLink:String = null, isCompact:Boolean = false, isSticky:Boolean = false, isQueueable:Boolean = true):void
+		public function show(notificationTitle:String, notificationMessage:String, notificationImage:String, notificationLink:String = null, isCompact:Boolean = false, isSticky:Boolean = false, isReplayable:Boolean = true):void
 		{
 			var notification:Notification = new Notification();
-			notification.notificationTitle = notificationTitle;
-			notification.notificationMessage = notificationMessage;
-			notification.notificationImage = notificationImage;
-			notification.notificationLink = notificationLink;
+			notification.title = notificationTitle;
+			notification.message = notificationMessage;
+			notification.image = notificationImage;
+			notification.link = notificationLink;
 			notification.isCompact = isCompact;
 			notification.isSticky = isSticky;
-			notification.isReplayable = isQueueable;
+			notification.isReplayable = isReplayable;
 			
 			showNotification(notification);
 		}  // show
@@ -110,7 +157,7 @@ package com.charlesbihis.engine.notification
 			if (previousQueue.length == 0)
 			{
 				var noUpdatesNotification:Notification = new Notification();
-				noUpdatesNotification.notificationTitle = "No Updates to Show";
+				noUpdatesNotification.title = "No Updates to Show";
 				noUpdatesNotification.isReplayable = false;
 				showNotification(noUpdatesNotification);
 				
@@ -122,13 +169,12 @@ package com.charlesbihis.engine.notification
 				// must create new notification with same properties since previously closed windows cannot be re-opened
 				var previousNotification:Notification = previousQueue.getItemAt(i) as Notification;
 				var notification:Notification = new Notification();
-				notification.notificationTitle = previousNotification.notificationTitle;
-				notification.notificationMessage = previousNotification.notificationMessage;
-				notification.notificationImage = previousNotification.notificationImage;
-				notification.notificationLink = previousNotification.notificationLink;
+				notification.title = previousNotification.title;
+				notification.message = previousNotification.message;
+				notification.image = previousNotification.image;
+				notification.link = previousNotification.link;
 				notification.isCompact = previousNotification.isCompact;
 				notification.isSticky = previousNotification.isSticky;
-				notification.title = Notification.NOTIFICATION_IDENTIFIER;
 				
 				queue.addItem(notification);
 			}  // for loop
@@ -150,7 +196,7 @@ package com.charlesbihis.engine.notification
 		private function showAll():void
 		{
 			// throttle the notifications!
-			if (new Date().time - latestNotificationTime <= NOTIFICATION_THROTTLE_TIME)
+			if (new Date().time - latestNotificationDisplay <= NOTIFICATION_THROTTLE_TIME)
 			{
 				setTimeout(showAll, NOTIFICATION_THROTTLE_TIME);
 				
@@ -180,16 +226,20 @@ package com.charlesbihis.engine.notification
 			{
 				// show it
 				var notification:Notification = queue.getItemAt(0) as Notification;
-				notification.open(false);
+				notification.open(this);
+				
+				// play sound
+				if (_notificationSound != null && (new Date().time - latestNotificationSound > MINIMUM_TIME_BETWEEN_NOTIFICATION_SOUNDS))
+				{
+					_notificationSound.play();
+					latestNotificationSound = new Date().time;
+				}  // if statement
 				
 				// keep track of it
 				activeToasts++;
 				
-				// listen for when it closes
-				notification.addEventListener(NotificationEvent.NOTIFICATION_CLOSE, notificationCloseHandler);
-				
 				// update the latest notification time
-				latestNotificationTime = new Date().time;
+				latestNotificationDisplay = new Date().time;
 				
 				// remove item from the queue
 				queue.removeItemAt(0);
@@ -197,11 +247,6 @@ package com.charlesbihis.engine.notification
 				// recursively call showAll until the queue is empty
 				setTimeout(showAll, NOTIFICATION_THROTTLE_TIME);
 			}  // if statement
-			
-			function notificationCloseHandler(event:Event):void
-			{
-				activeToasts--;
-			}  // notificationCloseHandler
 		}  // showAll
 		
 		private function userIdleHandler(event:Event):void
@@ -219,7 +264,7 @@ package com.charlesbihis.engine.notification
 			{
 				// build summary notification
 				var summaryNotification:Notification = new Notification();
-				summaryNotification.notificationTitle = "There were " + (suppressedNotificationCount + MAX_ACTIVE_TOASTS) + " stories posted while you were away";
+				summaryNotification.title = "There were " + (suppressedNotificationCount + MAX_ACTIVE_TOASTS) + " stories posted while you were away";
 				summaryNotification.isReplayable = false;
 				
 				// must reset suppressedNotificationCount back to 0 so that this upcoming
@@ -232,5 +277,3 @@ package com.charlesbihis.engine.notification
 		}  // onPresence
 	}  // class declaration
 }  // package
-
-class SingletonLock {}

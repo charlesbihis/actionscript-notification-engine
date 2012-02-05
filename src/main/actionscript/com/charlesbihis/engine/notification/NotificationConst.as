@@ -2,8 +2,9 @@ package com.charlesbihis.engine.notification
 {
 	public class NotificationConst
 	{
-		// general
-		public static const DEFAULT_ICON:String = "/com/charlesbihis/engine/notification/assets/images/m6d-magnum-sidearm-50x50.png";
+		// defaults
+		public static const DISPLAY_LENGTH_DEFAULT:int = DISPLAY_LENGTH_MEDIUM;
+		public static const DISPLAY_LOCATION_DEFAULT:String = DISPLAY_LOCATION_AUTO;
 		
 		// display length constants
 		public static const DISPLAY_LENGTH_SHORT:int = 4;
@@ -15,5 +16,6 @@ package com.charlesbihis.engine.notification
 		public static const DISPLAY_LOCATION_TOP_RIGHT:String = "topRight";
 		public static const DISPLAY_LOCATION_BOTTOM_LEFT:String = "bottomLeft";
 		public static const DISPLAY_LOCATION_BOTTOM_RIGHT:String = "bottomRight";
+		public static const DISPLAY_LOCATION_AUTO:String = "auto";
 	}  // class declaration
 }  // package
