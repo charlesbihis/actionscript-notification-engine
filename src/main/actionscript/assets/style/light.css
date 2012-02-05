@@ -1,0 +1,26 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+.notificationContainer
+{
+	backgroundAlpha: 0.0;
+}
+
+.notification
+{
+	cornerRadius: 8;
+	backgroundColor: #F5F5F5;
+	backgroundAlpha: 1.0;
+	borderStyle: solid;
+	borderColor: #b9b9b9;
+	paddingTop: 10;
+	paddingBottom: 10;
+	paddingLeft: 15;
+	paddingRight: 15;
+}
+
+.notificationText
+{
+	color: #000;
+}
