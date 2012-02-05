@@ -23,7 +23,7 @@ package com.charlesbihis.engine.notification
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;
 		private static const NOTIFICATION_MAX_REPLAY_COUNT:int = 5;
 		private static const MAX_ACTIVE_TOASTS:int = 5;
-		public static const MINIMUM_TIME_BETWEEN_NOTIFICATION_SOUNDS:int = 10000;	// 10 seconds
+		private static const MINIMUM_TIME_BETWEEN_NOTIFICATION_SOUNDS:int = 10000;	// 10 seconds
 		
 		private var queue:ArrayCollection;
 		private var previousQueue:ArrayCollection;
