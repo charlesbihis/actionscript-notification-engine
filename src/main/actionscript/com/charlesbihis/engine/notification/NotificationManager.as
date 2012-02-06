@@ -332,7 +332,7 @@ package com.charlesbihis.engine.notification
 				var summaryNotification:Notification = new Notification();
 				summaryNotification.title = "There were " + (suppressedNotificationCount + MAX_ACTIVE_TOASTS) + " stories posted while you were away";
 				summaryNotification.isReplayable = false;
-				log.info("Showing summary notification of {0} missed notifications", suppressedNotificationCount);
+				log.info("Showing summary notification of {0} missed notifications", (suppressedNotificationCount + MAX_ACTIVE_TOASTS));
 				
 				// must reset suppressedNotificationCount back to 0 so that this upcoming
 				// summary notification will not also be suppressed when shown
