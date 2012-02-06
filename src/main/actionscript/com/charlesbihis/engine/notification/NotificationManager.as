@@ -109,6 +109,7 @@ package com.charlesbihis.engine.notification
 			function notificationCloseHandler(event:Event):void
 			{
 				activeToasts--;
+				log.debug("Notification closed.  There are now {0} active toasts", activeToasts);
 			}  // notificationCloseHandler
 			
 			function loadStyleHandler(event:StyleEvent):void
