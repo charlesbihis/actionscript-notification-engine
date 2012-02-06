@@ -23,19 +23,8 @@
 			import mx.events.EffectEvent;
 			import mx.utils.UIDUtil;
 			
-			// public constants
-			public static const NOTIFICATION_IDENTIFIER:String = "NOTIFICATION_WINDOW";
+			public static const NOTIFICATION_IDENTIFIER:String = "M6D-MAGNUM-SIDEARM-WINDOW";
 			
-			// notification constants
-			private static const NOTIFICATION_WIDTH:int = 300;
-			private static const NOTIFICATION_TEXT_WIDTH:int = 210;
-			private static const RIGHT_MARGIN:int = 10;
-			private static const TOP_MARGIN:int = 5;
-			private static const MAX_FADEIN_ALPHA:Number = 0.85;
-			private static const MOVE_BY:int = 15;
-			private static const LIFETIME_RESET_VALUE:int = 5;	// in seconds
-			
-			// notification properties
 			[Bindable] public var notificationTitle:String;
 			[Bindable] public var notificationMessage:String;
 			[Bindable] public var notificationImage:String;
@@ -46,7 +35,14 @@
 			
 			public var notificationManager:NotificationManager;
 			
-			// private properties
+			private static const NOTIFICATION_WIDTH:int = 300;
+			private static const NOTIFICATION_TEXT_WIDTH:int = 210;
+			private static const RIGHT_MARGIN:int = 10;
+			private static const TOP_MARGIN:int = 5;
+			private static const MAX_FADEIN_ALPHA:Number = 0.85;
+			private static const MOVE_BY:int = 15;
+			private static const LIFETIME_RESET_VALUE:int = 5;	// in seconds
+			
 			private var lifetimeTimer:Timer;
 			private var repositionTimer:Timer;
 			private var lifetime:int;
@@ -57,20 +53,15 @@
 			
 			private function init():void
 			{
-				
-				
-				trace("showing");
-				// listen for important notifications
+				// listen for important events
 				notificationManager.addEventListener(NotificationEvent.CLOSE_ALL_NOTIFICATIONS, closeToast);
 				notificationManager.addEventListener(NotificationEvent.USER_IS_PRESENT, userPresentHandler);
-				
-				// add appropriate event handlers - don't want notification to disappear when the user is mouse'd over
 				addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
 				addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 				
 				// mark this update uniquely
 				notificationId = UIDUtil.createUID();
-				title += "-" + notificationId;
+				title += ":" + notificationId;
 				
 				// set notification display length
 				lifetime = notificationManager.displayLength;
@@ -138,7 +129,7 @@
 				
 				var x:int;
 				var y:int;
-				var testRect:Rectangle;
+				var rectangle:Rectangle;
 				
 				for (x = (isLeft ? screen.visibleBounds.x + RIGHT_MARGIN : screen.visibleBounds.x + screen.visibleBounds.width - size.width - TOP_MARGIN);
 					 (isLeft ? x <= screen.visibleBounds.x + screen.visibleBounds.width - size.width - 5 : x >= screen.visibleBounds.x);
@@ -148,9 +139,9 @@
 						 (isTop ? y <= screen.visibleBounds.y + screen.visibleBounds.height - size.height - TOP_MARGIN : y >= screen.visibleBounds.y);
 						 y += (isTop ? 10 : -10))
 					{
-						testRect = new Rectangle(x, isTop ? y - TOP_MARGIN : y, size.width + TOP_MARGIN, size.height + TOP_MARGIN);
+						rectangle = new Rectangle(x, isTop ? y - TOP_MARGIN : y, size.width + TOP_MARGIN, size.height + TOP_MARGIN);
 							
-						if(!isOccupied(testRect))
+						if(!isOccupied(rectangle))
 						{
 							spot.x = x;
 							spot.y = y;
@@ -190,7 +181,7 @@
 			
 			private function clickHandler():void
 			{
-				if (notificationLink != null && !closeButton.visible)
+				if (notificationLink != null && notificationLink.length > 0 && !closeButton.visible)
 				{
 					flash.net.navigateToURL(new URLRequest(notificationLink));
 				}  // if statement
@@ -269,6 +260,8 @@
 		<mx:Move id="repositionEffect" target="{this}" duration="500" />
 	</fx:Declarations>
 
+	<fx:Style source="/com/charlesbihis/engine/notification/style/style.css" />
+	
 	<mx:Canvas>
 		<mx:HBox id="notificationContent" styleName="notification" width="{NOTIFICATION_WIDTH}">
 			<mx:Image height="{(isCompact) ? 16 : 50}" width="{(isCompact) ? 16 : 50}" source="{notificationImage}" />
