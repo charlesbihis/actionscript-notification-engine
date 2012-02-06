@@ -18,6 +18,8 @@ M6D supports the following features...
 * Variable display length for notifications.
 * User-presence logic that detects when the user is at the computer.  If the user is away, notifications are held on-screen and queued for when the user returns.
 * Ability to replay most recent five notifications.
+* Individual notification post settings, such as sticky, replayable, custom image, click URL, compact, etc.
+* Smart repositioning logic for sticky posts.
 * Ability to see a summary notification if user is away for an extended period of time.
 * Support for changing the notification images.
 * Support for custom styling as well as changing styles on the fly.
