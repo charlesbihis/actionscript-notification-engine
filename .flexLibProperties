@@ -5,15 +5,6 @@
     <classEntry path="com.charlesbihis.engine.notification.NotificationConst"/>
     <classEntry path="com.charlesbihis.engine.notification.ui.Notification"/>
   </includeClasses>
-  <includeResources>
-    <resourceEntry destPath="assets/style/dark.swf" sourcePath="assets/style/dark.swf"/>
-    <resourceEntry destPath="assets/images/close.png" sourcePath="assets/images/close.png"/>
-    <resourceEntry destPath="assets/style/light.swf" sourcePath="assets/style/light.swf"/>
-    <resourceEntry destPath="assets/style/dark.css" sourcePath="assets/style/dark.css"/>
-    <resourceEntry destPath="assets/images/close_over.png" sourcePath="assets/images/close_over.png"/>
-    <resourceEntry destPath="assets/sounds/drop.mp3" sourcePath="assets/sounds/drop.mp3"/>
-    <resourceEntry destPath="assets/style/light.css" sourcePath="assets/style/light.css"/>
-    <resourceEntry destPath="assets/images/m6d-magnum-sidearm-50x50.png" sourcePath="assets/images/m6d-magnum-sidearm-50x50.png"/>
-  </includeResources>
+  <includeResources/>
   <namespaceManifests/>
 </flexLibProperties>
