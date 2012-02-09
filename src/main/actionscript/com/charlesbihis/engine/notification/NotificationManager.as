@@ -52,8 +52,15 @@ package com.charlesbihis.engine.notification
 		public function NotificationManager(defaultStyle:String, defaultNotificationImage:String, defaultCompactNotificationImage:String, notificationSound:String = null, displayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM, displayLocation:String = NotificationConst.DISPLAY_LOCATION_AUTO)
 		{
 			// initialize
-			queue = new ArrayCollection();
-			previousQueue = new ArrayCollection();
+			this.queue = new ArrayCollection();
+			this.previousQueue = new ArrayCollection();
+			this.latestNotificationDisplay = 0;
+			this.latestNotificationSound = 0;
+			this.suppressedNotificationCount = 0;
+			this.activeToasts = 0;
+			this.notificationSound = null;
+			this.soundLoaded = false;
+			this.themeLoaded = false;
 			
 			// set up logging
 			var logTarget:TraceTarget = new TraceTarget();
@@ -235,9 +242,19 @@ package com.charlesbihis.engine.notification
 			return _defaultNotificationImage;
 		}  // defaultNotificationImage
 		
-		public function defaultCompactNotificationImage():String
+		public function set defaultNotificationImage(defaultNotificationImage:String):void
+		{
+			_defaultNotificationImage = defaultNotificationImage;
+		}  // defaultNotificationImage
+		
+		public function get defaultCompactNotificationImage():String
 		{
 			return _defaultCompactNotificationImage;
+		}  // defaultCompactNotificationImage
+		
+		public function set defaultCompactNotificationImage(defaultCompactNotificationImage:String):void
+		{
+			_defaultCompactNotificationImage = defaultCompactNotificationImage;
 		}  // defaultCompactNotificationImage
 		
 		public function get displayLocation():String
@@ -245,9 +262,19 @@ package com.charlesbihis.engine.notification
 			return _displayLocation;
 		}  // displayLocation
 		
+		public function set displayLocation(displayLocation:String):void
+		{
+			_displayLocation = displayLocation;
+		}  // displayLocation
+		
 		public function get displayLength():int
 		{
 			return _displayLength;
+		}  // displayLength
+		
+		public function set displayLength(displayLength:int):void
+		{
+			_displayLength = displayLength;
 		}  // displayLength
 		
 		public function get isUserIdle():Boolean
@@ -258,7 +285,7 @@ package com.charlesbihis.engine.notification
 		private function showAll():void
 		{
 			// throttle the notifications!
-			if (!themeLoaded || new Date().time - latestNotificationDisplay <= NOTIFICATION_THROTTLE_TIME)
+			if (!themeLoaded || !soundLoaded || new Date().time - latestNotificationDisplay <= NOTIFICATION_THROTTLE_TIME)
 			{
 				setTimeout(showAll, NOTIFICATION_THROTTLE_TIME);
 				
