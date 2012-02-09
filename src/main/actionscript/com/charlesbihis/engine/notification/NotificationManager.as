@@ -220,8 +220,15 @@ package com.charlesbihis.engine.notification
 		
 		public function loadStyle(style:String):void
 		{
+			themeLoaded = false;
 			log.info("Loading style sheet at location: {0}", style);
-			FlexGlobals.topLevelApplication.styleManager.loadStyleDeclarations2(style);
+			var loadStyleEvent:IEventDispatcher = FlexGlobals.topLevelApplication.styleManager.loadStyleDeclarations2(style);
+			loadStyleEvent.addEventListener(StyleEvent.COMPLETE, loadStyleHandler);
+			
+			function loadStyleHandler(event:StyleEvent):void
+			{
+				themeLoaded = true;
+			}  // loadStyleHandler
 		}  // loadStyle
 		
 		public function clearLatestFiveUpdates():void
