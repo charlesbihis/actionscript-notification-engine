@@ -10,8 +10,10 @@
 .notification
 {
 	cornerRadius: 8;
-	backgroundColor: #FFF;
+	backgroundColor: #000;
 	backgroundAlpha: 0.8;
+	borderStyle: none;
+	borderColor: #000;
 	paddingTop: 10;
 	paddingBottom: 10;
 	paddingLeft: 15;
@@ -20,5 +22,5 @@
 
 .notificationText
 {
-	color: #fff;
+	color: #FFF;
 }
