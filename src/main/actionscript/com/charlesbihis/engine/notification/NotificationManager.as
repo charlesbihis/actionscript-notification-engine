@@ -29,7 +29,7 @@ package com.charlesbihis.engine.notification
 		private static const NOTIFICATION_THROTTLE_TIME:int = 500;
 		private static const NOTIFICATION_IDLE_THRESHOLD:int = 15;
 		private static const NOTIFICATION_MAX_REPLAY_COUNT:int = 5;
-		private static const MAX_ACTIVE_TOASTS:int = 2;
+		private static const MAX_ACTIVE_TOASTS:int = 5;
 		private static const MINIMUM_TIME_BETWEEN_NOTIFICATION_SOUNDS:int = 10000;	// 10 seconds
 		
 		private var log:ILogger = Log.getLogger("com.charlesbihis.engine.notification.NotificationManager");
@@ -118,24 +118,6 @@ package com.charlesbihis.engine.notification
 				activeToasts--;
 				log.debug("Notification closed.  There are now {0} active toasts", activeToasts);
 			}  // notificationCloseHandler
-			
-			function loadStyleHandler(event:StyleEvent):void
-			{
-				themeLoaded = true;
-			}  // styleLoadHandler
-			
-			function loadSoundHandler(event:Event):void
-			{
-				if (event is IOErrorEvent)
-				{
-					log.error("Unable to load sound file \"{0}\".  Please verify its location", notificationSound);
-					soundLoaded = false;
-				}  // if statement
-				else
-				{
-					soundLoaded = true;
-				}  // else statement
-			}  // loadSoundHandler
 		}  // NotificationManager
 		
 		public function showNotification(notification:Notification):void
@@ -224,12 +206,33 @@ package com.charlesbihis.engine.notification
 			log.info("Loading style sheet at location: {0}", style);
 			var loadStyleEvent:IEventDispatcher = FlexGlobals.topLevelApplication.styleManager.loadStyleDeclarations2(style);
 			loadStyleEvent.addEventListener(StyleEvent.COMPLETE, loadStyleHandler);
-			
-			function loadStyleHandler(event:StyleEvent):void
-			{
-				themeLoaded = true;
-			}  // loadStyleHandler
 		}  // loadStyle
+		
+		public function loadSound(sound:String):void
+		{
+			// add event listeners
+			if (notificationSound != null && !notificationSound.hasEventListener(Event.COMPLETE))
+			{
+				notificationSound.addEventListener(Event.COMPLETE, loadSoundHandler);
+			}  // if statement
+			if (notificationSound != null && !notificationSound.hasEventListener(IOErrorEvent.IO_ERROR))
+			{
+				this.notificationSound.addEventListener(IOErrorEvent.IO_ERROR, loadSoundHandler);
+			}  // if statement
+			
+			// load the sound
+			soundLoaded = false;
+			if (sound != null)
+			{
+				log.info("Loading sound file at location: {0}", sound);
+				notificationSound = new Sound(new URLRequest(sound));
+			}  // if statement
+			else
+			{
+				log.info("Disabling sound on notifications");
+				notificationSound = null;
+			}  // else statement
+		}  // loadSound
 		
 		public function clearLatestFiveUpdates():void
 		{
@@ -264,16 +267,6 @@ package com.charlesbihis.engine.notification
 			_defaultCompactNotificationImage = defaultCompactNotificationImage;
 		}  // defaultCompactNotificationImage
 		
-		public function get displayLocation():String
-		{
-			return _displayLocation;
-		}  // displayLocation
-		
-		public function set displayLocation(displayLocation:String):void
-		{
-			_displayLocation = displayLocation;
-		}  // displayLocation
-		
 		public function get displayLength():int
 		{
 			return _displayLength;
@@ -284,6 +277,16 @@ package com.charlesbihis.engine.notification
 			_displayLength = displayLength;
 		}  // displayLength
 		
+		public function get displayLocation():String
+		{
+			return _displayLocation;
+		}  // displayLocation
+		
+		public function set displayLocation(displayLocation:String):void
+		{
+			_displayLocation = displayLocation;
+		}  // displayLocation
+		
 		public function get isUserIdle():Boolean
 		{
 			return _isUserIdle;
@@ -292,7 +295,7 @@ package com.charlesbihis.engine.notification
 		private function showAll():void
 		{
 			// throttle the notifications!
-			if (!themeLoaded || !soundLoaded || new Date().time - latestNotificationDisplay <= NOTIFICATION_THROTTLE_TIME)
+			if (!themeLoaded || (notificationSound != null && !soundLoaded) || new Date().time - latestNotificationDisplay <= NOTIFICATION_THROTTLE_TIME)
 			{
 				setTimeout(showAll, NOTIFICATION_THROTTLE_TIME);
 				
@@ -348,13 +351,6 @@ package com.charlesbihis.engine.notification
 			}  // if statement
 		}  // showAll
 		
-		private function userIdleHandler(event:Event):void
-		{
-			log.debug("User is idle");
-			_isUserIdle = true;
-			dispatchEvent(new NotificationEvent(NotificationEvent.USER_IS_IDLE));
-		}  // onIdle
-		
 		private function userPresentHandler(event:Event):void
 		{
 			log.debug("User is back");
@@ -377,5 +373,30 @@ package com.charlesbihis.engine.notification
 				showNotification(summaryNotification);
 			}  // if statement
 		}  // onPresence
+		
+		private function userIdleHandler(event:Event):void
+		{
+			log.debug("User is idle");
+			_isUserIdle = true;
+			dispatchEvent(new NotificationEvent(NotificationEvent.USER_IS_IDLE));
+		}  // onIdle
+		
+		private function loadStyleHandler(event:StyleEvent):void
+		{
+			themeLoaded = true;
+		}  // styleLoadHandler
+		
+		private function loadSoundHandler(event:Event):void
+		{
+			if (event is IOErrorEvent)
+			{
+				log.error("Unable to load sound file \"{0}\".  Please verify its location", notificationSound);
+				soundLoaded = false;
+			}  // if statement
+			else
+			{
+				soundLoaded = true;
+			}  // else statement
+		}  // loadSoundHandler
 	}  // class declaration
 }  // package
