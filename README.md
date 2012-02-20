@@ -27,7 +27,9 @@ M6D supports the following features...
 ### Dependencies
 None
 
-## Usage
+## Documentation
+
+### Usage
 
 To use the library, simply drop in the SWC (or the source) into your project and follow the patterns below...
 
@@ -53,7 +55,27 @@ To use the library, simply drop in the SWC (or the source) into your project and
 	// we can also show notifications quickly using this API too
 	notificationManager.show("Derek Zoolander Foundation", "Now open!", "/assets/images/dzf-logo-50x50.png");
 
-## Documentation
+You can also change the engine's default settings on the fly too!
+
+	// let's change the default images, display length, and display location
+	notificationManager.defaultNotificationImage = "/assets/images/dzf-logo-50x50.png";
+	notificationManager.defaultCompactNotificationImage = "/assets/images/dzf-logo-16x16.png";
+	notificationManager.displayLength = NotificationConst.DISPLAY_LENGTH_SHORT;
+	notificationManager.displayLocation = NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
+	
+	// we can even change the style and sound settings on the fly too!
+	notificationManager.loadStyle("/assets/style/light.swf");
+	notificationManager.loadSound("/assets/sounds/bing.mp3");
+
+### Reference
+
+You can find the full ASDocs for the project here.
+
+## Special Notes
+
+### Note on Assets
+
+There are assets included in the project under the path /src/main/actionscript/assets/.  However, since library projects cannot include assets that aren't embedded, these will have to be included in your main project and referenced accordingly.  That is, if you try and reference them from the location in the library project, it will fail.  You must put them in your own containing project alongside your own assets and reference them as you do your other assets.  This includes all non-embedded images, sounds, and stylesheets.
 
 ## Author
 
@@ -64,4 +86,4 @@ To use the library, simply drop in the SWC (or the source) into your project and
 
 ## License
 
-M6D is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+The ActionScript Notification Engine (a.k.a. Project M6D Magnum Sidearm) is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
