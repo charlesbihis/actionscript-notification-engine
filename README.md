@@ -69,7 +69,7 @@ You can also change the engine's default settings on the fly too!
 
 ### Reference
 
-You can find the full ASDocs for the project here.
+You can find the full ASDocs for the project [here](/docs/).
 
 ## Special Notes
 
