@@ -22,8 +22,57 @@ package com.charlesbihis.engine.notification
 	import mx.logging.targets.TraceTarget;
 	import mx.utils.ObjectUtil;
 	
+	/**
+	 * Event broadcast when an active notification has just been closed.
+	 * 
+	 * @eventType com.charlesbihis.engine.notification.NotificationEvent.NOTIFICATION_CLOSE
+	 * 
+	 * @see com.charlesbihis.engine.notification.NotificationEvent
+	 */
+	[Event(name="notificationCloseEvent", type="com.charlesbihis.engine.notification.event.NotificationEvent")]
+	
+	/**
+	 * Event broadcast when an action to close all active notifications has been invoked.
+	 * 
+	 * @eventType com.charlesbihis.engine.notification.NotificationEvent.CLOSE_ALL_NOTIFICATIONS
+	 * 
+	 * @see com.charlesbihis.engine.notification.NotificationEvent
+	 */
+	[Event(name="closeAllNotificationsEvent", type="com.charlesbihis.engine.notification.event.NotificationEvent")]
+	
+	/**
+	 * Event broadcast when the user has gone idle.
+	 * 
+	 * @eventType com.charlesbihis.engine.notification.NotificationEvent.USER_IS_IDLE
+	 * 
+	 * @see com.charlesbihis.engine.notification.NotificationEvent
+	 */
+	[Event(name="userIsIdleEvent", type="com.charlesbihis.engine.notification.event.NotificationEvent")]
+	
+	/**
+	 * Event broadcast when the user has returned from idle.
+	 * 
+	 * @eventType com.charlesbihis.engine.notification.NotificationEvent.USER_IS_PRESENT
+	 * 
+	 * @see com.charlesbihis.engine.notification.NotificationEvent
+	 */
+	[Event(name="userIsPresentEvent", type="com.charlesbihis.engine.notification.event.NotificationEvent")]
+	
+	/**
+	 * Main service class for Notification Engine.
+	 * 
+	 * @langversion ActionScript 3.0
+	 * @playerversion Flash 10
+	 * 
+	 * @author Charles Bihis (www.whoischarles.com)
+	 */
 	public class NotificationManager extends EventDispatcher
 	{
+		/**
+		 * Array of strings containing title names of other AIR windows that should be noted
+		 * when displaying notifications.  Any title names in this array will be compared against
+		 * our notification display locations to avoid any overlapping.
+		 */ 
 		public static var otherWindowsToAvoid:Array = new Array();
 		
 		private static const NOTIFICATION_THROTTLE_TIME:int = 500;
@@ -49,6 +98,22 @@ package com.charlesbihis.engine.notification
 		private var _displayLength:int;
 		private var _isUserIdle:Boolean;
 		
+		/**
+		 * Constructor to create a valid NotificationManager object.  Will
+		 * create a notification engine with the passed in values as defaults settings.
+		 * Can also change these settings afterwards, but the first three at least (defaultStyle,
+		 * defaultNotificationImage, and defaultCompactNotificationImage) are required.  The
+		 * rest are optional and can be omitted or left null.
+		 * 
+		 * @param defaultStyle Location of compiled stylesheet to use as default style.
+		 * @param defaultNotificationImage Location of 50x50 image to use as default notification image when one isn't specified.
+		 * @param defaultCompactNotificationImage Location of 16x16 image to use as default compact notification image when one isn't specified.
+		 * @param notificationSound (Optional) Location of notification sound to use when displaying a notification.  Leave null if no sound desired.  Defaults to null.
+		 * @param displayLength (Optional) Length, in seconds, that notifications will stay on the screen.  Defaults to NotificationConst.DISPLAY_LENGTH_MEDIUM.
+		 * @param displayLocation (Optional) Location on-screen (i.e. top-left, top-right, bottom-left, or bottom-right) where notifications are to appear.  Defaults to NotificationConst.DISPLAY_LOCATION_AUTO.
+		 * 
+		 * @see com.charlesbihis.engine.notification.NotificationConst
+		 */
 		public function NotificationManager(defaultStyle:String, defaultNotificationImage:String, defaultCompactNotificationImage:String, notificationSound:String = null, displayLength:int = NotificationConst.DISPLAY_LENGTH_MEDIUM, displayLocation:String = NotificationConst.DISPLAY_LOCATION_AUTO)
 		{
 			// initialize
@@ -120,6 +185,13 @@ package com.charlesbihis.engine.notification
 			}  // notificationCloseHandler
 		}  // NotificationManager
 		
+		/**
+		 * Method to show a notification.
+		 * 
+		 * @param notification A notification object for which to display
+		 * 
+		 * @see com.charlesbihis.engine.notification.Notification
+		 */
 		public function showNotification(notification:Notification):void
 		{
 			log.debug("showNotification() called with notification object: {0}", ObjectUtil.toString(notification));
@@ -149,6 +221,19 @@ package com.charlesbihis.engine.notification
 			showAll();
 		}  // showNotification
 		
+		/**
+		 * Method to show notification using raw, passed-in values.  This is really
+		 * a convenience method for quickly showing a notification.  Behind the scenes,
+		 * it simply creates a notification object and calls the showNotification() API
+		 * with that object.
+		 * 
+		 * @param notificationTitle The title for the notification pop-up.
+		 * @param notificationMessage The message for the notification pop-up.
+		 * @param notificationLink (Optional) The URL, if any, to direct the user to when the notification is clicked.  If null, there will be no action on notification click.  Defaults to null.
+		 * @param isCompact (Optional) Parameter to set whether or not the notification should be displayed as a compact notification.  If this is true, the notification message will not be displayed.  Defaults to false.
+		 * @param isSticky (Optional) Parameter to set whether or not the notification is sticky and should remain on-screen until the user manually closes it.  Defaults to false.
+		 * @param isReplayable (Optional) Parameter to set whether or not the notification is replayable, meaning whether or not it will show up when the <code>replayLatestFiveNotifications()</code> API is invoked.  This is most often set to true, but would be set to false for certain types of notifications such as system notifications.  Defaults to true.
+		 */
 		public function show(notificationTitle:String, notificationMessage:String, notificationImage:String, notificationLink:String = null, isCompact:Boolean = false, isSticky:Boolean = false, isReplayable:Boolean = true):void
 		{
 			var notification:Notification = new Notification();
@@ -164,6 +249,9 @@ package com.charlesbihis.engine.notification
 			showNotification(notification);
 		}  // show
 		
+		/**
+		 * Method to replay the latest 5 updates.
+		 */
 		public function replayLatestFiveUpdates():void
 		{
 			log.info("Replaying latest five updates");
@@ -200,6 +288,12 @@ package com.charlesbihis.engine.notification
 			showAll();
 		}  // replayLatestFiveUpdates
 		
+		/**
+		 * Change the style at runtime by caling this API and passing in the location
+		 * of a compiled stylesheet.
+		 *
+		 * @param style Location of a compiled stylesheet to use as the current style for any further notifications.
+		 */
 		public function loadStyle(style:String):void
 		{
 			themeLoaded = false;
@@ -208,6 +302,12 @@ package com.charlesbihis.engine.notification
 			loadStyleEvent.addEventListener(StyleEvent.COMPLETE, loadStyleHandler);
 		}  // loadStyle
 		
+		/**
+		 * Load a sound to play when a notification is displayed.  If null is passed in, no notification sound
+		 * will be played at all.
+		 * 
+		 * @param sound Location of sound file to use as the sound played when a notification is displayed.
+		 */
 		public function loadSound(sound:String):void
 		{
 			// add event listeners
@@ -234,12 +334,22 @@ package com.charlesbihis.engine.notification
 			}  // else statement
 		}  // loadSound
 		
+		/**
+		 * Clears all notifications from history.  Calling <code>replayLatestFiveUpdates</code>
+		 * after calling this method will show no notifications.
+		 */
 		public function clearLatestFiveUpdates():void
 		{
 			log.info("Clearing latest five updates queue");
 			previousQueue.removeAll();
 		}  // clearLatestFiveUpdates
 		
+		/**
+		 * Closes all active, on-screen notifications.  Dispatches a
+		 * <code>NotificationEvent.CLOSE_ALL_NOTIFICATIONS</code> event to do so.
+		 * 
+		 * @see com.charlesbihis.engine.notification.event.NotificationEvent#CLOSE_ALL_NOTIFICATIONS
+		 */
 		public function closeAllNotifications():void
 		{
 			log.info("Dispatching NotificationEvent.CLOSE_ALL_NOTIFICATIONS event");
@@ -247,51 +357,85 @@ package com.charlesbihis.engine.notification
 			dispatchEvent(notificationEvent);
 		}  // closeAllNotifications
 		
+		/**
+		 * Default image to use in notifications when no image is specified in
+		 * the actual notification object.
+		 */
 		public function get defaultNotificationImage():String
 		{
 			return _defaultNotificationImage;
 		}  // defaultNotificationImage
 		
+		/**
+		 * @private
+		 */
 		public function set defaultNotificationImage(defaultNotificationImage:String):void
 		{
 			_defaultNotificationImage = defaultNotificationImage;
 		}  // defaultNotificationImage
 		
+		/**
+		 * Default compact image to use in compact notifications when no compact image is
+		 * specified in the actual notification object.
+		 */
 		public function get defaultCompactNotificationImage():String
 		{
 			return _defaultCompactNotificationImage;
 		}  // defaultCompactNotificationImage
 		
+		/**
+		 * @private
+		 */
 		public function set defaultCompactNotificationImage(defaultCompactNotificationImage:String):void
 		{
 			_defaultCompactNotificationImage = defaultCompactNotificationImage;
 		}  // defaultCompactNotificationImage
 		
+		/**
+		 * Default display length, in seconds, that the notifications will stay on screen for.
+		 */
 		public function get displayLength():int
 		{
 			return _displayLength;
 		}  // displayLength
 		
+		/**
+		 * @private
+		 */
 		public function set displayLength(displayLength:int):void
 		{
 			_displayLength = displayLength;
 		}  // displayLength
 		
+		/**
+		 * Default location on-screen (i.e. top-left, top-right, bottom-left, or bottom-right)
+		 * where notifications are to appear.
+		 */
 		public function get displayLocation():String
 		{
 			return _displayLocation;
 		}  // displayLocation
 		
+		/**
+		 * @private
+		 */
 		public function set displayLocation(displayLocation:String):void
 		{
 			_displayLocation = displayLocation;
 		}  // displayLocation
 		
+		/**
+		 * Convenience method for notifications that indicates whether or not the
+		 * user is idle.
+		 */
 		public function get isUserIdle():Boolean
 		{
 			return _isUserIdle;
 		}  // isUserIdle
 		
+		/**
+		 * @private
+		 */
 		private function showAll():void
 		{
 			// throttle the notifications!
@@ -351,6 +495,9 @@ package com.charlesbihis.engine.notification
 			}  // if statement
 		}  // showAll
 		
+		/**
+		 * @private
+		 */
 		private function userPresentHandler(event:Event):void
 		{
 			log.debug("User is back");
@@ -374,6 +521,9 @@ package com.charlesbihis.engine.notification
 			}  // if statement
 		}  // onPresence
 		
+		/**
+		 * @private
+		 */
 		private function userIdleHandler(event:Event):void
 		{
 			log.debug("User is idle");
@@ -381,11 +531,17 @@ package com.charlesbihis.engine.notification
 			dispatchEvent(new NotificationEvent(NotificationEvent.USER_IS_IDLE));
 		}  // onIdle
 		
+		/**
+		 * @private
+		 */
 		private function loadStyleHandler(event:StyleEvent):void
 		{
 			themeLoaded = true;
 		}  // styleLoadHandler
 		
+		/**
+		 * @private
+		 */
 		private function loadSoundHandler(event:Event):void
 		{
 			if (event is IOErrorEvent)
