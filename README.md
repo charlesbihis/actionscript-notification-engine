@@ -32,12 +32,12 @@ None
 To use the library, simply drop in the SWC (or the source) into your project and follow the patterns below...
 
 	// create engine with default settings
-	var notificationManager:NotificationManager = new NotificationManager("/assets/style/dark.swf",					// default style
+	var notificationManager:NotificationManager = new NotificationManager("/assets/style/dark.swf",				  // default style
 																		  "/assets/m6d-magnum-sidearm-50x50.png",	// default notification image
 																		  "/assets/m6d-magnum-sidearm-16x16.png",	// default compact notification image
-																		  "/assets/sounds/drop.mp3"					// (optional) default notification sound
-																		  NotificationConst.DISPLAY_LENGTH_DEFAULT, // (optional) default display length
-																		  NotificationConst.DISPLAY_LOCATION_AUTO); // (optional) default display location
+																		  "/assets/sounds/drop.mp3"				  // (optional) default notification sound
+																		  NotificationConst.DISPLAY_LENGTH_DEFAULT,  // (optional) default display length
+																		  NotificationConst.DISPLAY_LOCATION_AUTO);  // (optional) default display location
 	
 	// now that we have an engine, let's create a notification and show it
 	var notification:Notification = new Notification();
