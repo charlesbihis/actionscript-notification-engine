@@ -80,7 +80,7 @@ There are assets included in the project under the path /src/main/actionscript/a
 ## Author
 
 * Created by Charles Bihis
-* Website: [www.whoischarles.com](www.whoischarles.com)
+* Website: [www.whoischarles.com](http://www.whoischarles.com)
 * E-mail: [charles@whoischarles.com](mailto:charles@whoischarles.com)
 * Twitter: [@charlesbihis](http://www.twitter.com/charlesbihis)
 
