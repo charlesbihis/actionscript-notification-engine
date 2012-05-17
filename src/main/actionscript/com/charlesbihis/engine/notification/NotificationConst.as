@@ -44,6 +44,12 @@ package com.charlesbihis.engine.notification
 		 */
 		public static const DISPLAY_LENGTH_LONG:int = 12;
 		
+		/**
+		 * Duration of time inbetween repositioning of posts.  Is a prime number larger
+		 * than the DISPLAY_LENGTH_LONG value, so as not to collide with any new notifications. 
+		 */
+		public static const REPOSITION_LENGTH:int = 13;
+		
 		
 		//////////////////////
 		// DISPLAY LOCATION //

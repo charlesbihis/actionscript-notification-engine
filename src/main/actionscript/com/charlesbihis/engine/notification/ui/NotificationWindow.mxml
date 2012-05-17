@@ -76,7 +76,7 @@
 				}  // if statement
 				
 				// start the reposition logic
-				repositionTimer = new Timer(NotificationConst.DISPLAY_LENGTH_LONG * 1000);
+				repositionTimer = new Timer(NotificationConst.REPOSITION_LENGTH * 1000);
 				repositionTimer.addEventListener(TimerEvent.TIMER, repositionTimerHandler);
 				repositionTimer.start();
 				
