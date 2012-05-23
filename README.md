@@ -69,7 +69,7 @@ You can also change the engine's default settings on the fly too!
 
 ### Reference
 
-You can find the full ASDocs for the project [here](/actionscript-notification-engine/docs/).
+You can find the full ASDocs for the project [here](http://charlesbihis.github.com/actionscript-notification-engine/docs/).
 
 ## Special Notes
 
