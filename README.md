@@ -29,7 +29,7 @@ M6D supports the following features...
 ### Dependencies
 None
 
-## Documentation
+## Reference
 
 ### Usage
 
@@ -69,7 +69,7 @@ You can also change the engine's default settings on the fly too!
 	notificationManager.loadStyle("/assets/style/light.swf");
 	notificationManager.loadSound("/assets/sounds/bing.mp3");
 
-### Reference
+### Documentation
 
 You can find the full ASDocs for the project [here](http://charlesbihis.github.com/actionscript-notification-engine/docs/).
 
