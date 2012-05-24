@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>actionscript-notification-engine by charlesbihis</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>actionscript-notification-engine</h1>
+        <p>A cross-platform notification engine</p>
+        <p class="view"><a href="https://github.com/charlesbihis/actionscript-notification-engine">View the Project on GitHub <small>charlesbihis/actionscript-notification-engine</small></a></p>
+        <ul>
+          <li><a href="https://github.com/charlesbihis/actionscript-notification-engine/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/charlesbihis/actionscript-notification-engine/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/charlesbihis/actionscript-notification-engine">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>ActionScript Notification Engine</h1>
+
+<p>A powerful cross-platform notification engine.</p>
+
+<h2>Overview</h2>
+
+<p>M6D is a notification engine built on top of Adobe AIR.  With a very simple interface, you can drop it into your own desktop AIR project and use it to deliver messenger-style notifications to your users!  Think Growl, but for all platforms :)</p>
+
+<p>This project was first mentioned in my blog post at <a href="http://blogs.adobe.com/charles/2012/02/actionscript-notification-engine-open-sourced.html">http://blogs.adobe.com/charles/2012/02/actionscript-notification-engine-open-sourced.html</a>.</p>
+
+<h3>Codename</h3>
+
+<p>Project M6D Magnum Sidearm</p>
+
+<h3>Features</h3>
+
+<p>M6D supports the following features...</p>
+
+<ul>
+<li>Ability to display messenger-style toast notifications as well as compact notifications.</li>
+<li>Variable display length for notifications.</li>
+<li>User-presence logic that detects when the user is at the computer.  If the user is away, notifications are held on-screen and queued for when the user returns.</li>
+<li>Ability to replay most recent five notifications.</li>
+<li>Individual notification post settings, such as sticky, replayable, custom image, click URL, compact, etc.</li>
+<li>Smart repositioning logic for sticky posts.</li>
+<li>Ability to see a summary notification if user is away for an extended period of time.</li>
+<li>Support for changing the notification images.</li>
+<li>Support for custom styling as well as changing styles on the fly.</li>
+</ul><h3>Dependencies</h3>
+
+<p>None</p>
+
+<h2>Documentation</h2>
+
+<h3>Usage</h3>
+
+<p>To use the library, simply drop in the SWC (or the source) into your project and follow the patterns below...</p>
+
+<pre><code>// create engine with default settings
+var notificationManager:NotificationManager = new NotificationManager("/assets/style/dark.swf",               // default style
+                                                                      "/assets/m6d-magnum-sidearm-50x50.png",   // default notification image
+                                                                      "/assets/m6d-magnum-sidearm-16x16.png",   // default compact notification image
+                                                                      "/assets/sounds/drop.mp3"               // (optional) default notification sound
+                                                                      NotificationConst.DISPLAY_LENGTH_DEFAULT,  // (optional) default display length
+                                                                      NotificationConst.DISPLAY_LOCATION_AUTO);  // (optional) default display location
+
+// now that we have an engine, let's create a notification and show it
+var notification:Notification = new Notification();
+notification.title = "Derek ► Jacobim";
+notification.message = "What is this?  A center for ANTS?!";
+notification.image = "/assets/images/profile/derek/avatar.png";
+notification.link = "http://www.youtube.com/watch?v=_6GqqIvfSVQ";
+notification.isCompact = false;
+notification.isSticky = false;
+notification.isReplayable = true;
+notificationManager.showNotification(notification);
+
+// we can also show notifications quickly using this API too
+notificationManager.show("Derek Zoolander Foundation", "Now open!", "/assets/images/dzf-logo-50x50.png");
+</code></pre>
+
+<p>You can also change the engine's default settings on the fly too!</p>
+
+<pre><code>// let's change the default images, display length, and display location
+notificationManager.defaultNotificationImage = "/assets/images/dzf-logo-50x50.png";
+notificationManager.defaultCompactNotificationImage = "/assets/images/dzf-logo-16x16.png";
+notificationManager.displayLength = NotificationConst.DISPLAY_LENGTH_SHORT;
+notificationManager.displayLocation = NotificationConst.DISPLAY_LOCATION_TOP_RIGHT;
+
+// we can even change the style and sound settings on the fly too!
+notificationManager.loadStyle("/assets/style/light.swf");
+notificationManager.loadSound("/assets/sounds/bing.mp3");
+</code></pre>
+
+<h3>Reference</h3>
+
+<p>You can find the full ASDocs for the project <a href="http://charlesbihis.github.com/actionscript-notification-engine/docs/">here</a>.</p>
+
+<h2>Special Notes</h2>
+
+<h3>Note on Assets</h3>
+
+<p>There are assets included in the project under the path /src/main/actionscript/assets/.  However, since library projects cannot include assets that aren't embedded, these will have to be included in your main project and referenced accordingly.  That is, if you try and reference them from the location in the library project, it will fail.  You must put them in your own containing project alongside your own assets and reference them as you do your other assets.  This includes all non-embedded images, sounds, and stylesheets.</p>
+
+<h2>Author</h2>
+
+<ul>
+<li>Created by Charles Bihis</li>
+<li>Website: <a href="http://www.whoischarles.com">www.whoischarles.com</a>
+</li>
+<li>E-mail: <a href="mailto:charles@whoischarles.com">charles@whoischarles.com</a>
+</li>
+<li>Twitter: <a href="http://www.twitter.com/charlesbihis">@charlesbihis</a>
+</li>
+</ul><h2>License</h2>
+
+<p>The ActionScript Notification Engine (a.k.a. Project M6D Magnum Sidearm) is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/charlesbihis">charlesbihis</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
