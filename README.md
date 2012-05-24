@@ -69,6 +69,11 @@ You can also change the engine's default settings on the fly too!
 	notificationManager.loadStyle("/assets/style/light.swf");
 	notificationManager.loadSound("/assets/sounds/bing.mp3");
 
+### Demo
+
+* Live demo: http://blogs.adobe.com/charles/2012/02/actionscript-notification-engine-open-sourced.html
+* Demo source: https://github.com/charlesbihis/sandbox/tree/master/actionscript/actionscript-notification-engine-demo
+
 ### Documentation
 
 You can find the full ASDocs for the project [here](http://charlesbihis.github.com/actionscript-notification-engine/docs/).
