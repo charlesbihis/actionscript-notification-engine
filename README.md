@@ -6,6 +6,8 @@ A powerful cross-platform notification engine.
 
 M6D is a notification engine built on top of Adobe AIR.  With a very simple interface, you can drop it into your own desktop AIR project and use it to deliver messenger-style notifications to your users!  Think Growl, but for all platforms :)
 
+This project was first mentioned in my blog post at http://blogs.adobe.com/charles/2012/02/actionscript-notification-engine-open-sourced.html.
+
 ### Codename
 
 Project M6D Magnum Sidearm
